@@ -11,7 +11,7 @@ define iisnetpipe::website_enabledprotocol (
         $setEnabledProtocolsCommand = sprintf('Set-ItemProperty -Path "IIS:\Sites\%s" -Name enabledProtocols -Value "$currentEnabledProtocols,net.pipe"', $website)
         $command = "${currentEnabledProtocolsCommand};${setEnabledProtocolsCommand}"
 
-        exec { 'add-netpipe': 
+        exec { "add-netpipe-protocol-${website}": 
             provider => powershell,
             command => "$importModule;$command",
             onlyif => "$importModule;$ifExistsCommand { exit 1 }",
@@ -30,7 +30,7 @@ define iisnetpipe::website_enabledprotocol (
 
         $command = "${currentEnabledProtocolsCommand};${setEnabledProtocolsCommand}"
 
-        exec { 'remove-netpipe': 
+        exec { "remove-netpipe-protocol-${website}": 
             provider => powershell,
             command => "$importModule;$command",
             onlyif => "$importModule;$ifExistsCommand { exit 0 } exit 1",

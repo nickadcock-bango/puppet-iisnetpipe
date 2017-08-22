@@ -14,7 +14,7 @@ define iisnetpipe::website_binding (
 
     if $ensure == present {
         $command = sprintf('New-ItemProperty -Path IIS:\Sites\%s -Name bindings -Value @{protocol = "net.pipe"; bindingInformation = "%s"}', $website, $bindinginformation)
-        exec { 'add-netpipe-binding': 
+        exec { "add-netpipe-binding-${website} - ${bindinginformation}": 
             provider => powershell,
             command => "$importModule;$command",
             onlyif => "$importModule;$ifExistsCommand { exit 1 }",
@@ -27,7 +27,7 @@ define iisnetpipe::website_binding (
             Set-ItemProperty -Path $path -Name bindings -Value $prop
         ', $website, $bindinginformation)
 
-        exec { 'remove-netpipe-binding': 
+        exec { "remove-netpipe-binding-${website} - ${bindinginformation}": 
             provider => powershell,
             command => "$importModule;$command",
             onlyif => "$importModule;$ifExistsCommand { exit 0 } exit 1",
